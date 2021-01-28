@@ -4,10 +4,34 @@
 {% block css %}
 	<link href="{% static 'css/profile.css' %}" rel="stylesheet" />
 {% endblock css %}
+{% load customtags %}
 
 {% block title %}
 	{{ object }} | Django articles
 {% endblock title %}
 
 {% block content %}
+
+<div class="profile">
+	<div class="row">
+		<div class="profile-info">
+			<img src="{{ object.image|user_img }}" />
+			<a href="{{ object.get_url }}" class="profile-stats">@{{ object }}</a>
+			<ul class="profile-stats">
+				<li>{{ object.followers }} followers</li>
+				<li>{{ object.following }} following</li>
+				<li>{{ object.posts }} posts</li>
+			</ul>
+		</div>
+		<div class="profile-data">
+		{% for post in posts %}
+			<div class="post">
+				<hr>
+				<h1>{{ post.user }}</h1>
+				<p>{{ post.text }}</p>
+			</div>
+		{% endfor %}
+		</div>
+	</div>
+</div>
 {% endblock content %}
