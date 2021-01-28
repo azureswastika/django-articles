@@ -1,0 +1,49 @@
+.profile div {
+  padding-top: 0em;
+  color: #fff;
+}
+
+.profile-info {
+  background-color: #212529;
+  width: 100%;
+}
+
+.profile-stats li {
+  display: inline-block;
+}
+
+.profile-data {
+  background-color: #212529;
+  width: 100%;
+}
+
+.profile-info * {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.profile-info img {
+  width: 100px;
+  height: 100px;
+  display: block;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.profile-info a {
+  color: white;
+  text-decoration: none;
+}
+
+.profile-info a:hover {
+  color: #858585;
+}
+
+@media (max-width: 992px) {
+
+}
+
+@media (max-width: 576px) {
+}

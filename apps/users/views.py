@@ -2,9 +2,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse_lazy
-from django.views.generic.edit import CreateView, DeleteView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 
 from apps.users.models import CustomUser
+from apps.articles.models import Post
 
 from .forms import LoginForm, RegisterForm
 
@@ -39,9 +41,13 @@ class Logout(LogoutView):
     next_page = reverse_lazy('articles:root')
 
 
-class Profile(DeleteView):
+class Profile(DetailView):
     model = CustomUser
     template_name = 'users/user_profile.html'
 
+    def get_context_data(self, *args, **kwargs):
+        kwargs['posts'] = Post.get_user_posts(kwargs['object'])
+        return super().get_context_data(*args, **kwargs)
+
     def get_object(self):
-        return get_object_or_404(CustomUser, *self.args, **self.kwargs)
+        return get_object_or_404(CustomUser, is_active=True, *self.args, **self.kwargs)
