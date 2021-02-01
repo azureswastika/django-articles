@@ -13,14 +13,17 @@ class Post(models.Model):
     created_at = DateTimeField(_('Время публикации'), auto_now=True)
     is_active = BooleanField(default=True)
 
-    @staticmethod
-    def get_user_posts(user):
-        return Post.objects.filter(user=user, is_active=True).order_by('-created_at')
+    def __str__(self) -> str:
+        return f'{self.text[:30]} ({self.user})'
 
     def save(self, *args, **kwargs) -> None:
         if self.pk is None:
             self.user.posts += 1
-            self.user.save()
+        elif self.is_active:
+            self.user.posts += 1
+        else:
+            self.user.posts -= 1
+        self.user.save()
         return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -30,5 +33,6 @@ class Post(models.Model):
         self.save()
         return
 
-    def __str__(self) -> str:
-        return f'{self.text[:30]} ({self.user})'
+    @staticmethod
+    def get_user_posts(user):
+        return Post.objects.filter(user=user, is_active=True).order_by('-created_at')

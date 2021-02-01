@@ -10,6 +10,7 @@
 
 .profile-stats li {
   display: inline-block;
+  margin-right: 0.5em;
 }
 
 .profile-data {
@@ -42,7 +43,6 @@
 }
 
 @media (max-width: 992px) {
-
 }
 
 @media (max-width: 576px) {

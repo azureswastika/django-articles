@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load customtags %}
+
+{% block title %}
+    Подписчики {{ request.resolver_match.kwargs.username }} | Django Articles
+{% endblock title %}
+
+{% block header %}
+    {% include 'includes/header.html' %}
+{% endblock header %}
+
+{% block content %}
+    {% for object in object_list %}
+        <div class="user-list">
+            <a href="#">{{ object }}</a>
+        </div>
+    {% endfor %}
+{% endblock content %}
