@@ -76,5 +76,4 @@ class Following(ListView):
         return Follower.get_following(user)
 
     def get_context_object_name(self, object_list):
-        a = super().get_context_object_name(object_list)
-        return a
+        return super().get_context_object_name(object_list)

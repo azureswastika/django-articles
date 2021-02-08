@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import BooleanField, CharField, EmailField, ImageField
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import PositiveIntegerField
+from django.db.models.fields import DateTimeField, PositiveIntegerField
 from django.db.models.fields.related import ForeignKey
 from django.utils.translation import gettext_lazy as _
 
@@ -30,6 +30,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     posts = PositiveIntegerField(_('Записи'), default=0)
     is_active = BooleanField(default=False)
     is_staff = BooleanField(default=False)
+    join_date = DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']

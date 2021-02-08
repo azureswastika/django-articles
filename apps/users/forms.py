@@ -4,6 +4,18 @@ from django.contrib.auth import forms as auth
 from .models import CustomUser
 
 
+class UserCreationForm(auth.UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+
+
+class UserChangeForm(auth.UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+
+
 class FormModel(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

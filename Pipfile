@@ -7,9 +7,12 @@ name = "pypi"
 django = "*"
 pillow = "*"
 django-debug-toolbar = "*"
+twisted = "*"
+channels = "*"
 
 [dev-packages]
 flake8 = "*"
+black = "==19.3b0"
 
 [requires]
 python_version = "3.9"
