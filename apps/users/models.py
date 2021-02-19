@@ -55,11 +55,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Follower(models.Model):
-    user = ForeignKey(CustomUser, on_delete=CASCADE)
-    following = ForeignKey(CustomUser, on_delete=CASCADE, related_name="users")
+    user = ForeignKey(CustomUser, on_delete=CASCADE, related_name="users")
+    following = ForeignKey(CustomUser, on_delete=CASCADE, related_name="followings")
 
     def __str__(self) -> str:
-        return f"`{self.user}` подписан на `{self.following}`"
+        return f"{self.user} подписан на {self.following}"
 
     def save(self, *args, **kwargs):
         try:
@@ -73,8 +73,6 @@ class Follower(models.Model):
                 self.following.followers += 1
                 self.following.save()
             return super().save(*args, **kwargs)
-        else:
-            return
 
     def delete(self, *args, **kwargs):
         self.user.following -= 1

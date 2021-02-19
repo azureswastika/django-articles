@@ -29,6 +29,12 @@
   float: right;
 }
 
+.post {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80%;
+}
+
 .post img {
   background-color: white;
   width: 40px;
@@ -57,8 +63,11 @@
 }
 
 .user-list {
+  margin-left: auto;
+  margin-right: auto;
   background-color: #212529;
-  padding: 1em 0 2.5em 2em;
+  max-width: 60%;
+  padding: 1em 0 1.5em 2em;
 }
 
 .user-list img {
@@ -69,11 +78,14 @@
   background-color: white;
   display: block;
   float: left;
+  margin-right: 1em;
 }
 
 .user-list a {
   color: white;
   text-decoration: none;
+  display: block;
+  padding: 0.5em 0 0 0;
 }
 
 .user-list a:hover {

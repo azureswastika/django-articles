@@ -8,7 +8,9 @@
 {% block content %}
     {% for object in object_list %}
         <div class="user-list">
-            <img src="{{ object.following.image|user_img }}" />
+            <a href="{{ object.following.get_url }}">
+                <img src="{{ object.following.image|user_img }}" />
+            </a>
             <a href="{{ object.following.get_url }}">@{{ object.following }}</a>
         </div>
     {% endfor %}

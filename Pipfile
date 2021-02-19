@@ -9,6 +9,7 @@ pillow = "*"
 django-debug-toolbar = "*"
 twisted = "*"
 channels = "*"
+requests = "*"
 
 [dev-packages]
 flake8 = "*"

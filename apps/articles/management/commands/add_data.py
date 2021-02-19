@@ -1,4 +1,5 @@
-from random import randint, choice
+from random import choice, randint
+from threading import Thread
 
 from apps.articles.models import Post
 from apps.users.models import CustomUser, Follower
@@ -10,6 +11,20 @@ class Command(BaseCommand):
     help = "Add users/articles"
 
     def handle(self, *args, **options):
+        def add_posts(users):
+            for user in users:
+                for i in range(randint(3, 15)):
+                    text = get("https://loripsum.net/api/1/plaintext").text.strip()
+                    Post.objects.create(user=user, text=text)
+                    print("Пользователь: {}\nСоздан пост: {}".format(user, text))
+
+        def add_followers(users):
+            for following in users:
+                for i in range(randint(1, 20)):
+                    user = choice(users)
+                    Follower.objects.create(user=user, following=following)
+                    print("{} подписался на {}".format(following, user))
+
         try:
             CustomUser.objects.create_superuser(
                 username="admin", email="admin@mail.com", password="root"
@@ -28,18 +43,20 @@ class Command(BaseCommand):
             image = user["picture"]["large"]
             try:
                 user = CustomUser.objects.create_user(
-                    username=username, email=email, password="root", image=image, is_active=True
+                    username=username,
+                    email=email,
+                    password="root",
+                    image=image,
+                    is_active=True,
                 )
+                print("Создан пользователь: {}".format(user))
             except Exception:
                 pass
-            else:
-                for i in range(randint(3, 15)):
-                    text = get("https://loripsum.net/api/1/plaintext").text.strip()
-                    Post.objects.create(user=user, text=text)
         users = CustomUser.objects.all()
-        for user in users:
-            for i in range(randint(1, 20)):
-                Follower.objects.create(user=choice(users), following=user)
+        posts = Thread(target=add_posts, args=[users])
+        followers = Thread(target=add_followers, args=[users])
+        posts.start()
+        followers.start()
 
     def add_arguments(self, parser):
         parser.add_argument(
