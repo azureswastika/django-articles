@@ -21,19 +21,19 @@ class FormModel(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs["class"] = "form-control"
-            if field == 'email':
+            if field == "email":
                 self.fields[field].required = True
-            if field == 'password1' or field == 'password2':
+            if field == "password1" or field == "password2":
                 self.fields[field].help_text = None
 
 
 class LoginForm(auth.AuthenticationForm, FormModel):
     class Meta:
         model = CustomUser
-        fields = ('username', 'password')
+        fields = ("username", "password")
 
 
 class RegisterForm(auth.UserCreationForm, FormModel):
     class Meta:
         model = CustomUser
-        fields = ('email', 'username', 'password1', 'password2')
+        fields = ("email", "username", "password1", "password2")

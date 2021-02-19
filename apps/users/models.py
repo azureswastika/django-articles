@@ -12,28 +12,32 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = CharField(
-        _('имя пользователя'),
+        _("имя пользователя"),
         max_length=55,
         unique=True,
         error_messages={
-            'unique': _('Пользователь с таким именем уже зарегистрирован.')})
+            "unique": _("Пользователь с таким именем уже зарегистрирован.")
+        },
+    )
     email = EmailField(
-        _('электронный адрес'),
+        _("электронный адрес"),
         unique=True,
         null=True,
         blank=True,
         error_messages={
-            'unique': _('Пользователь с такой электронной почтой уже зарегистрирован.')})
-    image = ImageField(_('Фото профиля'), upload_to="profile/", null=True, blank=True)
-    followers = PositiveIntegerField(_('Подписчики'), default=0)
-    following = PositiveIntegerField(_('Подписки'), default=0)
-    posts = PositiveIntegerField(_('Записи'), default=0)
+            "unique": _("Пользователь с такой электронной почтой уже зарегистрирован.")
+        },
+    )
+    image = ImageField(_("Фото профиля"), upload_to="profile/", null=True, blank=True)
+    followers = PositiveIntegerField(_("Подписчики"), default=0)
+    following = PositiveIntegerField(_("Подписки"), default=0)
+    posts = PositiveIntegerField(_("Записи"), default=0)
     is_active = BooleanField(default=False)
     is_staff = BooleanField(default=False)
     join_date = DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
 
     objects = CustomUserManager()
 
@@ -41,21 +45,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def get_url(self):
-        return f'/user/{self.username}/'
+        return f"/user/{self.username}/"
 
     def get_followers_url(self):
-        return f'/user/{self.username}/followers/'
+        return f"/user/{self.username}/followers/"
 
     def get_following_url(self):
-        return f'/user/{self.username}/following/'
+        return f"/user/{self.username}/following/"
 
 
 class Follower(models.Model):
     user = ForeignKey(CustomUser, on_delete=CASCADE)
-    following = ForeignKey(CustomUser, on_delete=CASCADE, related_name='user')
+    following = ForeignKey(CustomUser, on_delete=CASCADE, related_name="users")
 
     def __str__(self) -> str:
-        return f'`{self.user}` подписан на `{self.following}`'
+        return f"`{self.user}` подписан на `{self.following}`"
 
     def save(self, *args, **kwargs):
         try:

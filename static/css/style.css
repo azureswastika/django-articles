@@ -56,6 +56,30 @@
   word-break: keep-all;
 }
 
+.user-list {
+  background-color: #212529;
+  padding: 1em 0 2.5em 2em;
+}
+
+.user-list img {
+  width: 50px;
+  height: 50px;
+  display: block;
+  border-radius: 50%;
+  background-color: white;
+  display: block;
+  float: left;
+}
+
+.user-list a {
+  color: white;
+  text-decoration: none;
+}
+
+.user-list a:hover {
+  color: #858585;
+}
+
 @media (max-width: 992px) {
   .header-photo {
     margin-bottom: 1em;

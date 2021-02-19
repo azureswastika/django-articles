@@ -12,7 +12,8 @@
 {% block content %}
     {% for object in object_list %}
         <div class="user-list">
-            <a href="#">{{ object }}</a>
+            <img src="{{ object.user.image|user_img }}" />
+            <a href="{{ object.user.get_url }}">@{{ object.user }}</a>
         </div>
     {% endfor %}
 {% endblock content %}

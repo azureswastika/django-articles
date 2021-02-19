@@ -9,12 +9,12 @@ from apps.users.models import CustomUser
 
 class Post(models.Model):
     user = ForeignKey(CustomUser, CASCADE)
-    text = TextField(_('Текст'))
-    created_at = DateTimeField(_('Время публикации'), auto_now=True)
+    text = TextField(_("Текст"))
+    created_at = DateTimeField(_("Время публикации"), auto_now=True)
     is_active = BooleanField(default=True)
 
     def __str__(self) -> str:
-        return f'{self.text[:30]} ({self.user})'
+        return f"{self.text[:30]} ({self.user})"
 
     def save(self, *args, **kwargs) -> None:
         if self.pk is None:
@@ -35,4 +35,4 @@ class Post(models.Model):
 
     @staticmethod
     def get_user_posts(user):
-        return Post.objects.filter(user=user, is_active=True).order_by('-created_at')
+        return Post.objects.filter(user=user, is_active=True).order_by("-created_at")

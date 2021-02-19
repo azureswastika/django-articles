@@ -21,59 +21,56 @@ class RedirectAuthUser:
 
 
 class Login(RedirectAuthUser, LoginView):
-    template_name = 'users/login.html'
+    template_name = "users/login.html"
     form_class = LoginForm
-    success_url = reverse_lazy('articles:root')
+    success_url = reverse_lazy("articles:root")
 
     def get_redirect_url(self) -> str:
         return self.success_url
 
 
 class Register(RedirectAuthUser, CreateView):
-    template_name = 'users/register.html'
+    template_name = "users/register.html"
     form_class = RegisterForm
-    success_url = reverse_lazy('articles:login')
+    success_url = reverse_lazy("articles:login")
 
     def get_redirect_url(self) -> str:
         return self.success_url
 
 
 class Logout(LogoutView):
-    next_page = reverse_lazy('articles:root')
+    next_page = reverse_lazy("articles:root")
 
 
 class Profile(DetailView):
     model = CustomUser
-    template_name = 'users/profile.html'
+    template_name = "users/profile.html"
 
     def get_object(self):
-        if self.request.user.username == self.kwargs.get('username'):
+        if self.request.user.username == self.kwargs.get("username"):
             return self.request.user
         return get_object_or_404(CustomUser, is_active=True, *self.args, **self.kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        kwargs['posts'] = Post.get_user_posts(kwargs['object'])
+        kwargs["posts"] = Post.get_user_posts(kwargs["object"])
         return super().get_context_data(*args, **kwargs)
 
 
 class Followers(ListView):
-    template_name = 'users/followers.html'
+    template_name = "users/followers.html"
 
     def get_queryset(self):
-        if self.request.user.username == self.kwargs.get('username'):
+        if self.request.user.username == self.kwargs.get("username"):
             return Follower.get_followers(self.request.user)
         user = get_object_or_404(CustomUser, **self.kwargs)
         return Follower.get_followers(user)
 
 
 class Following(ListView):
-    template_name = 'users/following.html'
+    template_name = "users/following.html"
 
     def get_queryset(self):
-        if self.request.user.username == self.kwargs.get('username'):
+        if self.request.user.username == self.kwargs.get("username"):
             return Follower.get_following(self.request.user)
         user = get_object_or_404(CustomUser, **self.kwargs)
         return Follower.get_following(user)
-
-    def get_context_object_name(self, object_list):
-        return super().get_context_object_name(object_list)

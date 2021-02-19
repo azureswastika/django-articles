@@ -17,7 +17,7 @@ class CustomUserAdmin(UserAdmin):
             "Права доступа",
             {"fields": ("is_superuser", "is_staff", "is_active")},
         ),
-        ("Важные даты", {"fields": ("last_login", )}),
+        ("Важные даты", {"fields": ("last_login",)}),
     )
     add_fieldsets = (
         (
