@@ -1,5 +1,4 @@
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse_lazy
 from django.views.generic.detail import DetailView
@@ -7,17 +6,10 @@ from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 
 from apps.articles.models import Post
+from apps.users.mixins import RedirectAuthUser
 from apps.users.models import CustomUser, Follower
 
 from .forms import LoginForm, RegisterForm
-
-
-class RedirectAuthUser:
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            redirect_to = self.get_redirect_url()
-            return HttpResponseRedirect(redirect_to)
-        return super().dispatch(request, *args, **kwargs)
 
 
 class Login(RedirectAuthUser, LoginView):

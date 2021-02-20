@@ -6,7 +6,7 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import BooleanField, DateTimeField, TextField
 from django.utils.translation import gettext_lazy as _
 
-from apps.users.models import CustomUser
+from apps.users import CustomUser
 
 
 class Post(models.Model):

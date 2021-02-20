@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from random import choice, randint
 
 import pytz
-from apps.articles.models import Post
-from apps.users.models import CustomUser, Follower
+from apps.articles import Post
+from apps.users import CustomUser, Follower
 from django.core.management.base import BaseCommand
 from requests import get
 

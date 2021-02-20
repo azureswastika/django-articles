@@ -1,15 +1,8 @@
-from django.contrib.auth.views import redirect_to_login
+from apps.articles.mixins import RedirectNotAuthUser
 from django.views.generic.list import ListView
 
-from apps.articles.models import Post
-from apps.users.models import Follower
-
-
-class RedirectNotAuthUser:
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect_to_login(request.path)
-        return super().dispatch(request, *args, **kwargs)
+from apps.articles import Post
+from apps.users import Follower
 
 
 class Feed(RedirectNotAuthUser, ListView):
