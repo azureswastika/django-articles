@@ -23,7 +23,7 @@ class RedirectAuthUser:
 class Login(RedirectAuthUser, LoginView):
     template_name = "users/login.html"
     form_class = LoginForm
-    success_url = reverse_lazy("articles:root")
+    success_url = reverse_lazy("articles:feed")
 
     def get_redirect_url(self) -> str:
         return self.success_url
@@ -39,7 +39,7 @@ class Register(RedirectAuthUser, CreateView):
 
 
 class Logout(LogoutView):
-    next_page = reverse_lazy("articles:root")
+    next_page = reverse_lazy("users:login")
 
 
 class Profile(DetailView):

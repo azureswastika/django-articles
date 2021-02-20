@@ -87,6 +87,7 @@ STATICFILES_DIRS = [BASE_DIR.joinpath("static")]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR.joinpath(MEDIA_URL)
 
+LOGIN_URL = "login"
 AUTH_USER_MODEL = "users.CustomUser"
 
 INTERNAL_IPS = ["127.0.0.1"]

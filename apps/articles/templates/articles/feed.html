@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load customtags %}
+
+{% block title %}
+    Feed
+{% endblock title %}
+
+{% block content %}
+    <div class="feed">
+        {% include "articles/includes/post.html" %}
+    </div>
+{% endblock content %}
