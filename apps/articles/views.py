@@ -1,5 +1,4 @@
 from django.contrib.auth.views import redirect_to_login
-from django.http.response import HttpResponseRedirect
 from django.views.generic.list import ListView
 
 from apps.articles.models import Post
@@ -9,12 +8,11 @@ from apps.users.models import Follower
 class RedirectNotAuthUser:
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
-            redirect_to = redirect_to_login()
-            return HttpResponseRedirect(redirect_to)
+            return redirect_to_login(request.path)
         return super().dispatch(request, *args, **kwargs)
 
 
-class Feed(ListView):
+class Feed(RedirectNotAuthUser, ListView):
     template_name = "articles/feed.html"
     context_object_name = "posts"
     paginate_by = 10

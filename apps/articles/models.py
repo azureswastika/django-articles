@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.db.models import ForeignKey
 from django.db.models.deletion import CASCADE
@@ -10,7 +12,7 @@ from apps.users.models import CustomUser
 class Post(models.Model):
     user = ForeignKey(CustomUser, CASCADE)
     text = TextField(_("Текст"))
-    created_at = DateTimeField(_("Время публикации"), auto_now=True)
+    created_at = DateTimeField(_("Время публикации"), default=datetime.now())
     is_active = BooleanField(default=True)
 
     def __str__(self) -> str:
