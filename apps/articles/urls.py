@@ -1,11 +1,10 @@
 from django.urls import path
-from django.views.generic import TemplateView
 
-from .views import Feed
+from .views import FeedView, IndexView
 
 app_name = "articles"
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="base.html"), name="root"),
-    path("feed/", Feed.as_view(), name="feed"),
+    path("", IndexView.as_view(), name="root"),
+    path("feed/", FeedView.as_view(), name="feed"),
 ]

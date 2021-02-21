@@ -36,7 +36,6 @@
 }
 
 .post img {
-  background-color: white;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -98,6 +97,17 @@
   max-width: 80%;
   margin-left: auto;
   margin-right: auto;
+}
+
+#post_create {
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#post_create textarea {
+  background-color: #212529;
+  color: white;
 }
 
 @media (max-width: 992px) {

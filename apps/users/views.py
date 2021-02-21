@@ -1,10 +1,13 @@
 from django.contrib.auth.views import LoginView, LogoutView
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls.base import reverse_lazy
+from django.urls.base import reverse, reverse_lazy
+from django.views.generic import FormView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 
+from apps.articles.forms import PostCreate
 from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
 from apps.users.models import CustomUser, Follower
@@ -12,7 +15,7 @@ from apps.users.models import CustomUser, Follower
 from .forms import LoginForm, RegisterForm
 
 
-class Login(RedirectAuthUser, LoginView):
+class LoginView(RedirectAuthUser, LoginView):
     template_name = "users/login.html"
     form_class = LoginForm
     success_url = reverse_lazy("articles:feed")
@@ -21,7 +24,7 @@ class Login(RedirectAuthUser, LoginView):
         return self.success_url
 
 
-class Register(RedirectAuthUser, CreateView):
+class RegisterView(RedirectAuthUser, CreateView):
     template_name = "users/register.html"
     form_class = RegisterForm
     success_url = reverse_lazy("articles:login")
@@ -30,12 +33,13 @@ class Register(RedirectAuthUser, CreateView):
         return self.success_url
 
 
-class Logout(LogoutView):
+class LogoutView(LogoutView):
     next_page = reverse_lazy("users:login")
 
 
-class Profile(DetailView):
+class ProfileView(DetailView, FormView):
     model = CustomUser
+    form_class = PostCreate
     template_name = "users/profile.html"
 
     def get_object(self):
@@ -47,8 +51,16 @@ class Profile(DetailView):
         kwargs["posts"] = Post.get_user_posts(kwargs["object"])
         return super().get_context_data(*args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        Post.objects.create(user=request.user, text=form.data.get("text"))
+        return HttpResponseRedirect(self.get_success_url())
 
-class Followers(ListView):
+    def get_success_url(self) -> str:
+        return reverse("users:profile", kwargs={"username": self.kwargs.get("username")})
+
+
+class FollowersView(ListView):
     template_name = "users/followers.html"
 
     def get_queryset(self):
@@ -58,7 +70,7 @@ class Followers(ListView):
         return Follower.get_followers(user)
 
 
-class Following(ListView):
+class FollowingView(ListView):
     template_name = "users/following.html"
 
     def get_queryset(self):

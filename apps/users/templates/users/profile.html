@@ -24,6 +24,11 @@
 			</ul>
 		</div>
 		<div class="profile-data">
+            <form method="post" id="post_create" class="mb-4">
+				{% csrf_token %}
+				{{ form.as_p }}
+                <button type="submit" class="btn btn-dark">Написать</button>
+            </form>
 			{% include "articles/includes/post.html" %}
 		</div>
 	</div>

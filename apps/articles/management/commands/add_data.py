@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from random import choice, randint
 
 import pytz
-from apps.articles import Post
-from apps.users import CustomUser, Follower
+from apps.articles.models import Post
+from apps.users.models import CustomUser, Follower
 from django.core.management.base import BaseCommand
 from requests import get
 
@@ -17,7 +17,7 @@ def add_posts(users):
             print("Пользователь: {}\nСоздан пост: {}".format(user, text))
 
 
-def gen_datetime(min_year=2019, max_year=datetime.now(tzinfo=pytz.UTC).year):
+def gen_datetime(min_year=2019, max_year=datetime.now().year):
     start = datetime(min_year, 1, 1, 00, 00, 00, tzinfo=pytz.UTC)
     years = max_year - min_year + 1
     end = start + timedelta(days=365 * years)
