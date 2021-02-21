@@ -18,10 +18,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # modules
     "debug_toolbar",
-    "channels",
     # apps
-    "apps.articles",
     "apps.users",
+    "apps.articles",
 ]
 
 MIDDLEWARE = [
@@ -55,8 +54,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-ASGI_APPLICATION = "config.asgi.application"
-
 DATABASES = {
     "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
 }
@@ -89,5 +86,3 @@ MEDIA_ROOT = BASE_DIR.joinpath(MEDIA_URL)
 
 LOGIN_URL = "users:login"
 AUTH_USER_MODEL = "users.CustomUser"
-
-INTERNAL_IPS = ["127.0.0.1"]
