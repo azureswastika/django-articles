@@ -1,5 +1,10 @@
+from django.contrib.auth.password_validation import (
+    validate_password as ValidatePassword,
+)
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http.response import HttpResponseRedirect
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email as ValidateEmail
+from django.http.response import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
 from django.views.generic import FormView
@@ -57,7 +62,9 @@ class ProfileView(DetailView, FormView):
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self) -> str:
-        return reverse("users:profile", kwargs={"username": self.kwargs.get("username")})
+        return reverse(
+            "users:profile", kwargs={"username": self.kwargs.get("username")}
+        )
 
 
 class FollowersView(ListView):
@@ -78,3 +85,31 @@ class FollowingView(ListView):
             return Follower.get_following(self.request.user)
         user = get_object_or_404(CustomUser, **self.kwargs)
         return Follower.get_following(user)
+
+
+def validate_email(request):
+    try:
+        email = request.GET.get("email", None)
+        ValidateEmail(email)
+    except ValidationError:
+        return JsonResponse({"is_taken": True})
+    else:
+        response = {"is_taken": CustomUser.objects.filter(email__iexact=email).exists()}
+        return JsonResponse(response)
+
+
+def validate_username(request):
+    username = request.GET.get("username", None)
+    response = {
+        "is_taken": CustomUser.objects.filter(username__iexact=username).exists()
+    }
+    return JsonResponse(response)
+
+
+def validate_password(request):
+    try:
+        password = request.GET.get("password1", None)
+        ValidatePassword(password)
+        return JsonResponse({"valid": True})
+    except (ValidationError, TypeError):
+        return JsonResponse({"valid": False})

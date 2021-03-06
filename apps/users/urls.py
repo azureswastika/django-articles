@@ -7,6 +7,9 @@ from .views import (
     LogoutView,
     ProfileView,
     RegisterView,
+    validate_email,
+    validate_username,
+    validate_password,
 )
 
 app_name = "users"
@@ -18,4 +21,7 @@ urlpatterns = [
     path("user/<str:username>/", ProfileView.as_view(), name="profile"),
     path("user/<str:username>/followers/", FollowersView.as_view(), name="followers"),
     path("user/<str:username>/following/", FollowingView.as_view(), name="following"),
+    path("validate_email/", validate_email, name="validate_email"),
+    path("validate_username/", validate_username, name="validate_username"),
+    path("validate_password/", validate_password, name="validate_password"),
 ]

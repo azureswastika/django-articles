@@ -1,9 +1,12 @@
-from datetime import datetime
-
 from django.db import models
 from django.db.models import ForeignKey
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import BooleanField, DateTimeField, TextField
+from django.db.models.fields import (
+    BooleanField,
+    DateTimeField,
+    PositiveIntegerField,
+    TextField,
+)
 from django.utils.translation import gettext_lazy as _
 
 from apps.users.models import CustomUser
@@ -12,7 +15,8 @@ from apps.users.models import CustomUser
 class Post(models.Model):
     user = ForeignKey(CustomUser, CASCADE)
     text = TextField(_("Текст"))
-    created_at = DateTimeField(_("Время публикации"), default=datetime.now())
+    likes = PositiveIntegerField(_("Количество лайков"), default=0)
+    created_at = DateTimeField(_("Время публикации"), auto_now_add=True)
     is_active = BooleanField(default=True)
 
     def __str__(self) -> str:

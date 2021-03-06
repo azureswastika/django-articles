@@ -17,3 +17,63 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $('#id_email').keyup(function () {
+            $.ajax({
+                data: $(this).serialize(),
+                url: "{% url 'users:validate_email' %}",
+                success: function (response) {
+                    if (response.is_taken == true) {
+                        $('#id_email').removeClass('is-valid').addClass('is-invalid');
+                    }
+                    else {
+                        $('#id_email').removeClass('is-invalid').addClass('is-valid');
+                    }
+                },
+            });
+            return false;
+        });
+        $('#id_username').keyup(function () {
+            $.ajax({
+                data: $(this).serialize(),
+                url: "{% url 'users:validate_username' %}",
+                success: function (response) {
+                    if (response.is_taken == true) {
+                        $('#id_username').removeClass('is-valid').addClass('is-invalid');
+                    }
+                    else {
+                        $('#id_username').removeClass('is-invalid').addClass('is-valid');
+                    }
+                }
+            });
+            return false;
+        });
+        $('#id_password1').keyup(function () {
+            $.ajax({
+                data: $(this).serialize(),
+                url: "{% url 'users:validate_password' %}",
+                success: function (response) {
+                    if (response.valid == true) {
+                        $('#id_password1').removeClass('is-invalid').addClass('is-valid');
+                    }
+                    else {
+                        $('#id_password1').removeClass('is-valid').addClass('is-invalid');
+                    }
+                }
+            });
+            return false;
+        });
+        $('#id_password2').keyup(function () {
+            if ($('#id_password1').val() == $('#id_password2').val()) {
+                $('#id_password2').removeClass('is-invalid').addClass('is-valid');
+            }
+            else {
+                $('#id_password2').removeClass('is-valid').addClass('is-invalid');
+            }
+        });
+    })
+</script>
+{% endblock javascript %}
