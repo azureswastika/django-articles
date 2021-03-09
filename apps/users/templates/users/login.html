@@ -12,8 +12,28 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <a href="{% url 'users:register' %}">Регистрация</a>
-                <button type="submit" class="btn btn-primary">Войти</button>
+                <button type="submit" class="btn btn-primary" disabled>Войти</button>
             </form>
         </div>
     </div>
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        function isEmpty() {
+            if ($('#id_username').val() && $('#id_password').val()) {
+                $("button[type='submit']").prop('disabled', false);
+            } else {
+                $("button[type='submit']").prop('disabled', true);
+            }
+        }
+        $('#id_username').keyup(function () {
+            isEmpty()
+        });
+        $('#id_password').keyup(function () {
+            isEmpty()
+        });
+    })
+</script>
+{% endblock javascript %}

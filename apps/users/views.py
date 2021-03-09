@@ -12,6 +12,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 
+import string
 from apps.articles.forms import PostCreate
 from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
@@ -100,6 +101,9 @@ def validate_email(request):
 
 def validate_username(request):
     username = request.GET.get("username", None)
+    for i in string.punctuation + string.whitespace:
+        if i in username:
+            return JsonResponse({"is_taken": True})
     response = {
         "is_taken": CustomUser.objects.filter(username__iexact=username).exists()
     }
