@@ -4,7 +4,6 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import (
     BooleanField,
     DateTimeField,
-    PositiveIntegerField,
     TextField,
 )
 from django.db.models.fields.related import ManyToManyField
@@ -16,10 +15,9 @@ from apps.users.models import CustomUser
 class Post(models.Model):
     user = ForeignKey(CustomUser, CASCADE)
     text = TextField(_("Текст"))
-    likes = PositiveIntegerField(_("Количество лайков"), default=0)
+    likes = ManyToManyField(CustomUser, "likes", blank=True)
     created_at = DateTimeField(_("Время публикации"), auto_now_add=True)
     is_active = BooleanField(default=True)
-    likes = ManyToManyField(CustomUser, "likes", blank=True)
 
     class Meta:
         ordering = ("-created_at",)
@@ -46,4 +44,4 @@ class Post(models.Model):
 
     @staticmethod
     def get_user_posts(user):
-        return Post.objects.filter(user=user, is_active=True).order_by("-created_at")
+        return Post.objects.filter(user=user, is_active=True)

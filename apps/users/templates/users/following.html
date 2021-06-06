@@ -11,7 +11,22 @@
             <a href="{{ object.get_url }}">
                 <img src="{{ object.image|user_img }}" />
             </a>
-            <a href="{{ object.get_url }}">@{{ object }}</a>
+            <div class="row">
+                <div class="col-10"><a href="{{ object.get_url }}" class="username">@{{ object }}</a></div>
+                {% if request.user.username == request.resolver_match.kwargs.username %}
+                    <div class="col-2"><a href="#" class="btn-dark" user="{{ object.pk }}">Отписаться</a></div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).on('click', '.btn-dark', function () {
+        const id = $(this).attr('user')
+        axios.get(`/follow/${id}/`).then(function (response) {})
+        $(this).parent().parent().parent().remove();
+    })
+</script>
+{% endblock javascript %}

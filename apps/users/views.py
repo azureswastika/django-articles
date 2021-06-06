@@ -4,7 +4,7 @@ from django.contrib.auth.password_validation import (
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
-from django.http.response import HttpResponseRedirect, JsonResponse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
 from django.views.generic import FormView
@@ -54,7 +54,7 @@ class ProfileView(DetailView, FormView):
         return get_object_or_404(CustomUser, is_active=True, *self.args, **self.kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        kwargs["posts"] = Post.get_user_posts(kwargs["object"])
+        kwargs["posts"] = kwargs["object"].get_posts()
         return super().get_context_data(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -86,6 +86,21 @@ class FollowingView(ListView):
             return self.request.user.get_following_query()
         user = get_object_or_404(CustomUser, **self.kwargs)
         return user.get_following_query()
+
+
+def follow(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    if request.user.following.filter(pk=pk).exists():
+        request.user.following.remove(user)
+    else:
+        request.user.following.add(user)
+    return HttpResponse(None)
+
+
+def follower(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    request.user.followers.remove(user)
+    return HttpResponse(None)
 
 
 def validate_email(request):

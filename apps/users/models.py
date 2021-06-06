@@ -4,6 +4,7 @@ from django.db.models.fields import DateTimeField, PositiveIntegerField
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.apps import apps
 from django.utils.translation import gettext_lazy as _
 
 from .managers import CustomUserManager
@@ -48,6 +49,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def get_following_query(self):
         return self.following.all()
+
+    def get_posts(self):
+        return (
+            apps.get_app_config("articles")
+            .get_model("Post")
+            .objects.filter(user=self, is_active=True)
+        )
 
     def get_url(self):
         return f"/user/{self.username}/"
