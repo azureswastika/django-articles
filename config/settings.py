@@ -16,10 +16,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # modules
     "debug_toolbar",
-
     # apps
     "apps.users",
     "apps.articles",
@@ -89,4 +87,4 @@ MEDIA_ROOT = BASE_DIR.joinpath(MEDIA_URL)
 LOGIN_URL = "users:login"
 AUTH_USER_MODEL = "users.CustomUser"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

@@ -43,7 +43,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "-u", "--users", default="20",
+            "-u",
+            "--users",
+            default="20",
         )
 
 
@@ -60,4 +62,8 @@ def add_followers(users: list, users_count: int):
     for user in users:
         followers = choices(users, k=randint(1, users_count))
         user.followers.add(*followers)
-        print("{} подписались на {}".format(", ".join(str(user) for user in followers), user))
+        print(
+            "{} подписались на {}".format(
+                ", ".join(str(user) for user in followers), user
+            )
+        )

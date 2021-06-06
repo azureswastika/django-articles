@@ -22,7 +22,7 @@ class Post(models.Model):
     likes = ManyToManyField(CustomUser, "likes", blank=True)
 
     class Meta:
-        ordering = ("-created_at", )
+        ordering = ("-created_at",)
 
     def __str__(self) -> str:
         return f"{self.text[:30]} ({self.user})"
