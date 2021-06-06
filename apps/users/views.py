@@ -16,7 +16,7 @@ import string
 from apps.articles.forms import PostCreate
 from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
-from apps.users.models import CustomUser, Follower
+from apps.users.models import CustomUser
 
 from .forms import LoginForm, RegisterForm
 
@@ -73,9 +73,9 @@ class FollowersView(ListView):
 
     def get_queryset(self):
         if self.request.user.username == self.kwargs.get("username"):
-            return Follower.get_followers(self.request.user)
+            return self.request.user.get_followers_query()
         user = get_object_or_404(CustomUser, **self.kwargs)
-        return Follower.get_followers(user)
+        return user.get_followers_query()
 
 
 class FollowingView(ListView):
@@ -83,9 +83,9 @@ class FollowingView(ListView):
 
     def get_queryset(self):
         if self.request.user.username == self.kwargs.get("username"):
-            return Follower.get_following(self.request.user)
+            return self.request.user.get_following_query()
         user = get_object_or_404(CustomUser, **self.kwargs)
-        return Follower.get_following(user)
+        return user.get_following_query()
 
 
 def validate_email(request):

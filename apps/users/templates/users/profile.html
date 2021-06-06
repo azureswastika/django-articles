@@ -18,8 +18,8 @@
 			<img src="{{ object.image|user_img }}" />
 			<a href="{{ object.get_url }}" class="profile-stats">@{{ object }}</a>
 			<ul class="profile-stats">
-				<li><a href="{{ object.get_followers_url }}">{{ object.followers }} followers</a></li>
-				<li><a href="{{ object.get_following_url }}">{{ object.following }} following</a></li>
+				<li><a href="{{ object.get_followers_url }}">{{ object.followers.count }} followers</a></li>
+				<li><a href="{{ object.get_following_url }}">{{ object.following.count }} following</a></li>
 				<li>{{ object.posts }} posts</li>
 			</ul>
 		</div>

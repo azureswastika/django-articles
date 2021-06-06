@@ -7,6 +7,7 @@ from django.db.models.fields import (
     PositiveIntegerField,
     TextField,
 )
+from django.db.models.fields.related import ManyToManyField
 from django.utils.translation import gettext_lazy as _
 
 from apps.users.models import CustomUser
@@ -18,6 +19,10 @@ class Post(models.Model):
     likes = PositiveIntegerField(_("Количество лайков"), default=0)
     created_at = DateTimeField(_("Время публикации"), auto_now_add=True)
     is_active = BooleanField(default=True)
+    likes = ManyToManyField(CustomUser, "likes", blank=True)
+
+    class Meta:
+        ordering = ("-created_at", )
 
     def __str__(self) -> str:
         return f"{self.text[:30]} ({self.user})"
