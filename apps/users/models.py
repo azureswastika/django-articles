@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import BooleanField, CharField, EmailField, ImageField
-from django.db.models.fields import DateTimeField, PositiveIntegerField
+from django.db.models.fields import DateTimeField
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
@@ -31,7 +31,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     image = ImageField(_("Фото профиля"), upload_to="profile/", null=True, blank=True)
     followers = ManyToManyField("users.CustomUser", "user_followers", blank=True)
     following = ManyToManyField("users.CustomUser", "user_following", blank=True)
-    posts = PositiveIntegerField(_("Записи"), default=0)
     is_active = BooleanField(default=False)
     is_staff = BooleanField(default=False)
     join_date = DateTimeField(auto_now_add=True)
@@ -42,7 +41,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     class Meta:
-        ordering = ("username", )
+        ordering = ("username",)
 
     def __str__(self) -> str:
         return self.username
@@ -58,6 +57,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             apps.get_app_config("articles")
             .get_model("Post")
             .objects.filter(user=self, is_active=True)
+        )
+
+    def get_posts_count(self):
+        return (
+            apps.get_app_config("articles")
+            .get_model("Post")
+            .objects.filter(user=self, is_active=True)
+            .count()
         )
 
     def is_follower(self, user):

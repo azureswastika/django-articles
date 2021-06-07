@@ -20,7 +20,7 @@
 			<ul class="profile-stats">
 				<li><a href="{{ object.get_followers_url }}" id="followers">{{ object.followers.count }} followers</a></li>
 				<li><a href="{{ object.get_following_url }}" id="following">{{ object.following.count }} following</a></li>
-				<li>{{ object.posts }} posts</li>
+				<li>{{ object.get_posts_count }} posts</li>
 			</ul>
 			{% if object.pk != request.user.pk %}
 				{% if object|is_follower:request.user %}
@@ -47,6 +47,7 @@
 {% endblock content %}
 
 {% block javascript %}
+<script src="{% static 'js/like.js' %}"></script>
 <script>
 	{% if request.user.is_authenticated %}
 		$('#follow').click(function () {

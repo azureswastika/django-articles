@@ -25,23 +25,18 @@ class Post(models.Model):
     def __str__(self) -> str:
         return f"{self.text[:30]} ({self.user})"
 
-    def save(self, *args, **kwargs) -> None:
-        if self.pk is None:
-            self.user.posts += 1
-        elif self.is_active:
-            self.user.posts += 1
-        else:
-            self.user.posts -= 1
-        self.user.save()
-        return super().save(*args, **kwargs)
-
     def delete(self, *args, **kwargs):
-        self.user.posts -= 1
-        self.user.save()
         self.is_active = False
         self.save()
         return
 
+    def user_liked(self, user):
+        return self.likes.filter(pk=user.pk).exists()
+
     @staticmethod
     def get_user_posts(user):
         return Post.objects.filter(user=user, is_active=True)
+
+    @staticmethod
+    def get_feed(user):
+        return Post.objects.filter(user__in=user.following.all(), is_active=True)
