@@ -7,5 +7,5 @@ app_name = "articles"
 urlpatterns = [
     path("", IndexView.as_view(), name="root"),
     path("feed/", FeedView.as_view(), name="feed"),
-    path("post/like/<int:post>", like_post, name="like_post")
+    path("post/like/<int:post>", like_post, name="like_post"),
 ]
