@@ -41,6 +41,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
+    class Meta:
+        ordering = ("username", )
+
     def __str__(self) -> str:
         return self.username
 
@@ -57,6 +60,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             .objects.filter(user=self, is_active=True)
         )
 
+    def is_follower(self, user):
+        return self.followers.filter(pk=user.pk).exists()
+
     def get_url(self):
         return f"/user/{self.username}/"
 
@@ -71,10 +77,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 def followers_change(sender, instance: CustomUser, action: str, pk_set: set, **kwargs):
     if action == "post_add":
         for pk in pk_set:
-            if instance.pk == pk:
-                continue
-            user = CustomUser.objects.get(pk=pk)
-            user.following.add(instance)
+            if instance.pk != pk:
+                user = CustomUser.objects.get(pk=pk)
+                user.following.add(instance)
     if action == "post_remove":
         for pk in pk_set:
             user = CustomUser.objects.get(pk=pk)

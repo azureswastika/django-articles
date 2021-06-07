@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load customtags %}
+
+{% block title %}
+    Подписки {{ request.resolver_match.kwargs.username }} | Django Articles
+{% endblock title %}
+
+{% block content %}
+    <div class="user-list">
+        <div class="row">
+            <div class="col-10 col-md-10" style="margin: 0 auto;">
+                <form action="" method="get" class="custom-form">
+                    <div class="input-group mt-3 mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Имя пользователя">
+                        <button type="submit" class="btn btn-secondary">Найти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for object in object_list %}
+        <div class="user-list">
+            <a href="{{ object.get_url }}">
+                <img src="{{ object.image|user_img }}" />
+            </a>
+            <div class="row">
+                <div class="col-10"><a href="{{ object.get_url }}" class="username">@{{ object }}</a></div>
+                <div class="col-2">
+                    {% if object|is_follower:request.user %}
+                        <a href="#" class="btn-dark" id="{{ object.pk }}">Отписаться</a>
+                    {% else %}
+                        <a href="#" class="btn-dark" id="{{ object.pk }}">Подписаться</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).on('click', '.btn-dark', function () {
+        const id = $(this).attr('id')
+        axios.get(`/follow/${id}/`).then(function (response) {
+            $('#' + id).text(response.data.message)
+        })
+    })
+</script>
+{% endblock javascript %}

@@ -18,10 +18,17 @@
 			<img src="{{ object.image|user_img }}" />
 			<a href="{{ object.get_url }}" class="profile-stats">@{{ object }}</a>
 			<ul class="profile-stats">
-				<li><a href="{{ object.get_followers_url }}">{{ object.followers.count }} followers</a></li>
-				<li><a href="{{ object.get_following_url }}">{{ object.following.count }} following</a></li>
+				<li><a href="{{ object.get_followers_url }}" id="followers">{{ object.followers.count }} followers</a></li>
+				<li><a href="{{ object.get_following_url }}" id="following">{{ object.following.count }} following</a></li>
 				<li>{{ object.posts }} posts</li>
 			</ul>
+			{% if object.pk != request.user.pk %}
+				{% if object|is_follower:request.user %}
+					<a href="#" class="btn-dark" id="follow" user="{{ object.pk }}">Отписаться</a>
+				{% else %}
+					<a href="#" class="btn-dark" id="follow" user="{{ object.pk }}">Подписаться</a>
+				{% endif %}
+			{% endif %}
 		</div>
 		<div class="profile-data">
 			{% if request.user == object %}
@@ -38,3 +45,22 @@
 	</div>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+<script>
+	{% if request.user.is_authenticated %}
+		$('#follow').click(function () {
+			const id = '{{ object.pk }}'
+			axios.get(`/follow/${id}/`).then(function (response) {
+				$('#followers').text(response.data.count)
+				$('#follow').text(response.data.message);
+			})
+		})
+	{% else %}
+		$('#follow').click(function () {
+			window.location = '/login/?next=' + window.location.pathname
+		})
+	{% endif %}
+	
+</script>
+{% endblock javascript %}

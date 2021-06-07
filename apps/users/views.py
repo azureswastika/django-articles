@@ -1,12 +1,12 @@
 import string
 
-from django.contrib.auth.password_validation import \
-    validate_password as ValidatePassword
+from django.contrib.auth.password_validation import (
+    validate_password as ValidatePassword,
+)
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
-from django.http.response import (HttpResponse, HttpResponseRedirect,
-                                  JsonResponse)
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -90,13 +90,31 @@ class FollowingView(ListView):
         return user.get_following_query()
 
 
+class UsersView(ListView):
+    template_name = "users/users.html"
+
+    def get_queryset(self):
+        username = self.request.GET.get("username", "")
+        print(username)
+        return sorted(
+            CustomUser.objects.filter(username__icontains=username).exclude(
+                pk=self.request.user.pk
+            ),
+            key=lambda user: -user.followers.count(),
+        )
+
+
 def follow(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
-    if request.user.following.filter(pk=pk).exists():
-        request.user.following.remove(user)
-    else:
-        request.user.following.add(user)
-    return HttpResponse(None)
+    if user.is_follower(request.user):
+        user.followers.remove(request.user)
+        return JsonResponse(
+            {"message": "Подписаться", "count": f"{user.followers.count()} followers"}
+        )
+    user.followers.add(request.user)
+    return JsonResponse(
+        {"message": "Отписаться", "count": f"{user.followers.count()} followers"}
+    )
 
 
 def follower(request, pk):

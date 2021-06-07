@@ -135,6 +135,18 @@ a {
   color: white;
 }
 
+.custom-form input {
+  background: #2a3035;
+  border-color: #2a3035;
+  color: #fff;
+}
+
+.custom-form input:focus {
+  background: #2a3035;
+  border-color: #2a3035;
+  color: #fff;
+}
+
 @media (max-width: 992px) {
   .header-photo {
     margin-bottom: 1em;

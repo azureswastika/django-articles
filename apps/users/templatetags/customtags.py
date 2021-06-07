@@ -11,3 +11,8 @@ def media_folder_users(string: str):
     if str(string).startswith("http"):
         return string
     return f"{settings.MEDIA_URL}{string}"
+
+
+@register.filter(name="is_follower")
+def is_follower(user, args):
+    return user.is_follower(args)
