@@ -25,7 +25,7 @@ urlpatterns = [
     path("user/<str:username>/following/", FollowingView.as_view(), name="following"),
     path("follow/<int:pk>/", follow, name="follow"),
     path("follower/<int:pk>/", follower, name="follower"),
-    path("validate_email/", validate_email, name="validate_email"),
-    path("validate_username/", validate_username, name="validate_username"),
-    path("validate_password/", validate_password, name="validate_password"),
+    path("validate/email/", validate_email, name="validate_email"),
+    path("validate/username/", validate_username, name="validate_username"),
+    path("validate/password/", validate_password, name="validate_password"),
 ]

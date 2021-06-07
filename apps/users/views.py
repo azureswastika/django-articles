@@ -1,18 +1,20 @@
-from django.contrib.auth.password_validation import (
-    validate_password as ValidatePassword,
-)
+import string
+
+from django.contrib.auth.password_validation import \
+    validate_password as ValidatePassword
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
-from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http.response import (HttpResponse, HttpResponseRedirect,
+                                  JsonResponse)
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 
-import string
 from apps.articles.forms import PostCreate
 from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
@@ -103,9 +105,10 @@ def follower(request, pk):
     return HttpResponse(None)
 
 
+@csrf_exempt
 def validate_email(request):
     try:
-        email = request.GET.get("email", None)
+        email = request.POST.get("email", None)
         ValidateEmail(email)
     except ValidationError:
         return JsonResponse({"is_taken": True})
@@ -114,8 +117,9 @@ def validate_email(request):
         return JsonResponse(response)
 
 
+@csrf_exempt
 def validate_username(request):
-    username = request.GET.get("username", None)
+    username = request.POST.get("username", None)
     for i in string.punctuation + string.whitespace:
         if i in username:
             return JsonResponse({"is_taken": True})
@@ -125,9 +129,10 @@ def validate_username(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 def validate_password(request):
     try:
-        password = request.GET.get("password1", None)
+        password = request.POST.get("password", None)
         ValidatePassword(password)
         return JsonResponse({"valid": True})
     except (ValidationError, TypeError):
