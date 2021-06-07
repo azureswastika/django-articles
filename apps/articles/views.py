@@ -1,3 +1,4 @@
+from django.http import request
 from django.http.response import JsonResponse
 from django.views.generic import TemplateView
 from django.views.generic.list import ListView
@@ -18,6 +19,20 @@ class FeedView(RedirectNotAuthUser, ListView):
 
     def get_queryset(self):
         return Post.get_feed(self.request.user)
+
+
+class RecommendationsView(RedirectNotAuthUser, ListView):
+    template_name = "articles/recommendations.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        liked = Post.objects.filter(likes=self.request.user)[:5]
+        posts = []
+        for like in liked:
+            for user in like.likes.all().exclude(pk=self.request.user.pk):
+                for post in Post.objects.filter(likes=user).exclude(likes__pk=self.request.user.pk)[:5]:
+                    posts.append(post)
+        return sorted(list(set(posts)), key=lambda post: post.created_at)[::-1]
 
 
 def like_post(request, post):

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customtags %}
+
+{% block title %}
+    Рекомендации | Django Articles
+{% endblock title %}
+
+{% block content %}
+    <div class="feed">
+        {% include "articles/includes/post.html" %}
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/like.js' %}"></script>
+{% endblock javascript %}
