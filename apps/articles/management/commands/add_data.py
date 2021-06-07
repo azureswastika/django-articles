@@ -3,6 +3,7 @@ from random import choices, randint
 from apps.articles.models import Post
 from apps.users.models import CustomUser
 from django.core.management.base import BaseCommand
+from lorem import get_paragraph
 from requests import get
 
 
@@ -38,8 +39,8 @@ class Command(BaseCommand):
             except Exception:
                 pass
         users = CustomUser.objects.all()
-        add_posts(users)
         add_followers(users, users.count())
+        add_posts(users)
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -47,15 +48,6 @@ class Command(BaseCommand):
             "--users",
             default="20",
         )
-
-
-def add_posts(users):
-    for user in users:
-        print("Пользователь: {}".format(user))
-        for i in range(randint(3, 15)):
-            text = get("https://loripsum.net/api/1/plaintext").text.strip()
-            Post.objects.create(user=user, text=text)
-        print("Созданы посты")
 
 
 def add_followers(users: list, users_count: int):
@@ -67,3 +59,14 @@ def add_followers(users: list, users_count: int):
                 ", ".join(str(user) for user in followers), user
             )
         )
+
+
+def add_posts(users):
+    for user in users:
+        print("Пользователь: {}".format(user))
+        for i in range(randint(3, 15)):
+            text = get_paragraph(randint(1, 2))
+            post = Post.objects.create(user=user, text=text)
+            likes = choices(users, k=randint(3, 12))
+            post.likes.add(*likes)
+            print("{} лайкнули {}".format(", ".join(str(user) for user in likes), post))

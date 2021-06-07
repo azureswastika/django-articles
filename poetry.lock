@@ -173,6 +173,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "python-lorem"
+version = "1.1.2"
+description = "Lorem ipsum generator."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "pytz"
 version = "2021.1"
 description = "World timezone definitions, modern and historical"
@@ -238,7 +246,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "598e296c71022e64719fd0869f3e4290bda57b3e2ae418045fc2a01f114e5cde"
+content-hash = "77eb25934587a507d880c99f1b1fc9b3c6e9bf47a8cc9b8eb741a060f73a132a"
 
 [metadata.files]
 appdirs = [
@@ -340,6 +348,10 @@ pycodestyle = [
 pyflakes = [
     {file = "pyflakes-2.3.1-py2.py3-none-any.whl", hash = "sha256:7893783d01b8a89811dd72d7dfd4d84ff098e5eed95cfa8905b22bbffe52efc3"},
     {file = "pyflakes-2.3.1.tar.gz", hash = "sha256:f5bc8ecabc05bb9d291eb5203d6810b49040f6ff446a756326104746cc00c1db"},
+]
+python-lorem = [
+    {file = "python-lorem-1.1.2.tar.gz", hash = "sha256:f1991a304719d233ea14098501ae34b9aa03e7f3700683472619b8975ffa9b9d"},
+    {file = "python_lorem-1.1.2-py3-none-any.whl", hash = "sha256:7fee2289b7f034653034a7ef2f1bde860346ccc99748c852a25f596de12d9ccb"},
 ]
 pytz = [
     {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
