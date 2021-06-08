@@ -24,6 +24,22 @@
             >Лента</a
           >
         </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.resolver_match.url_name == 'recommendations' %}active{% endif %}"
+            aria-current="page"
+            href="{% url 'articles:recommendations' %}"
+            >Рекомендации</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}"
+            aria-current="page"
+            href="{% url 'users:users' %}"
+            >Пользователи</a
+          >
+        </li>
       </ul>
       {% if request.user.is_authenticated %}
         <a href="{{ request.user.get_url }}">

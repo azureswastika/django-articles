@@ -4,6 +4,7 @@
 }
 
 .profile-info {
+  text-align: center;
   background-color: #212529;
   width: 100%;
 }
@@ -28,21 +29,17 @@
 .profile-info img {
   width: 100px;
   height: 100px;
+  background: #fff;
   display: block;
   border-radius: 50%;
 }
 
 .profile-info a {
+  display: inline;
   color: white;
   text-decoration: none;
 }
 
 .profile-info a:hover {
   color: #858585;
-}
-
-@media (max-width: 992px) {
-}
-
-@media (max-width: 576px) {
 }

@@ -1,10 +1,11 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
 from django.db.models import BooleanField, CharField, EmailField, ImageField
-from django.db.models.deletion import CASCADE
-from django.db.models.fields import DateTimeField, PositiveIntegerField
-from django.db.models.fields.related import ForeignKey
+from random import randint, shuffle
+from django.db.models.fields import DateTimeField
+from django.db.models.fields.related import ManyToManyField
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+from django.apps import apps
 from django.utils.translation import gettext_lazy as _
 
 from .managers import CustomUserManager
@@ -29,9 +30,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         },
     )
     image = ImageField(_("Фото профиля"), upload_to="profile/", null=True, blank=True)
-    followers = PositiveIntegerField(_("Подписчики"), default=0)
-    following = PositiveIntegerField(_("Подписки"), default=0)
-    posts = PositiveIntegerField(_("Записи"), default=0)
+    followers = ManyToManyField("users.CustomUser", "user_followers", blank=True)
+    following = ManyToManyField("users.CustomUser", "user_following", blank=True)
     is_active = BooleanField(default=False)
     is_staff = BooleanField(default=False)
     join_date = DateTimeField(auto_now_add=True)
@@ -41,8 +41,59 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
+    class Meta:
+        ordering = ("username",)
+
     def __str__(self) -> str:
         return self.username
+
+    def get_followers_query(self):
+        return self.followers.all()
+
+    def get_following_query(self):
+        return self.following.all()
+
+    def get_posts(self):
+        return self.Post.objects.filter(user=self, is_active=True)
+
+    def get_feed(self):
+        return self.Post.objects.filter(user__in=self.following.all(), is_active=True)
+
+    def get_recommendations(self):
+        liked = self.Post.objects.filter(likes=self)[: randint(2, 6)]
+        posts = []
+        for like in liked:
+            for user in like.likes.all().exclude(pk=self.pk)[:5]:
+                for post in self.Post.objects.filter(likes=user).exclude(
+                    likes__pk=self.pk
+                )[: randint(2, 6)]:
+                    posts.append(post)
+        shuffle(posts)
+        return posts
+
+    def get_posts_count(self):
+        return self.Post.objects.filter(user=self, is_active=True).count()
+
+    def follow(self, user) -> dict:
+        if user.is_follower(self):
+            user.followers.remove(self)
+            return {"message": "Подписаться", "count": user.followers.count()}
+        user.followers.add(self)
+        return {"message": "Отписаться", "count": user.followers.count()}
+
+    def is_follower(self, user):
+        return self.followers.filter(pk=user.pk).exists()
+
+    @staticmethod
+    def get_popular(pk: int, username: str):
+        return sorted(
+            CustomUser.objects.filter(username__icontains=username).exclude(pk=pk),
+            key=lambda user: -user.followers.count(),
+        )
+
+    @property
+    def Post(self):
+        return apps.get_app_config("articles").get_model("Post")
 
     def get_url(self):
         return f"/user/{self.username}/"
@@ -54,37 +105,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"/user/{self.username}/following/"
 
 
-class Follower(models.Model):
-    user = ForeignKey(CustomUser, on_delete=CASCADE, related_name="users")
-    following = ForeignKey(CustomUser, on_delete=CASCADE, related_name="followings")
-
-    def __str__(self) -> str:
-        return f"{self.user} подписан на {self.following}"
-
-    def save(self, *args, **kwargs):
-        try:
-            if self.user != self.following:
-                Follower.objects.get(user=self.user, following=self.following)
-            return
-        except ObjectDoesNotExist:
-            if self.pk is None:
-                self.user.following += 1
-                self.user.save()
-                self.following.followers += 1
-                self.following.save()
-            return super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.user.following -= 1
-        self.user.save()
-        self.following.followers -= 1
-        self.following.save()
-        return super().delete(*args, **kwargs)
-
-    @staticmethod
-    def get_followers(user):
-        return Follower.objects.filter(following=user)
-
-    @staticmethod
-    def get_following(user):
-        return Follower.objects.filter(user=user)
+@receiver(m2m_changed, sender=CustomUser.followers.through)
+def followers_change(sender, instance: CustomUser, action: str, pk_set: set, **kwargs):
+    if action == "post_add":
+        for pk in pk_set:
+            if instance.pk != pk:
+                user = CustomUser.objects.get(pk=pk)
+                user.following.add(instance)
+    if action == "post_remove":
+        for pk in pk_set:
+            user = CustomUser.objects.get(pk=pk)
+            user.following.remove(instance)

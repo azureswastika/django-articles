@@ -1,24 +1,27 @@
+import string
+
 from django.contrib.auth.password_validation import (
     validate_password as ValidatePassword,
 )
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
-from django.http.response import HttpResponseRedirect, JsonResponse
+from django.http import request
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-import string
 from apps.articles.forms import PostCreate
 from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
-from apps.users.models import CustomUser, Follower
+from apps.users.models import CustomUser
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, UserChangeForm
 
 
 class LoginView(RedirectAuthUser, LoginView):
@@ -54,7 +57,7 @@ class ProfileView(DetailView, FormView):
         return get_object_or_404(CustomUser, is_active=True, *self.args, **self.kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        kwargs["posts"] = Post.get_user_posts(kwargs["object"])
+        kwargs["posts"] = kwargs["object"].get_posts()
         return super().get_context_data(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -68,14 +71,26 @@ class ProfileView(DetailView, FormView):
         )
 
 
+class ProfileUpdateView(UpdateView):
+    model = CustomUser
+    form_class = UserChangeForm
+    template_name = "users/profile_update.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self) -> str:
+        return reverse("users:profile", args=[self.request.user.username])
+
+
 class FollowersView(ListView):
     template_name = "users/followers.html"
 
     def get_queryset(self):
         if self.request.user.username == self.kwargs.get("username"):
-            return Follower.get_followers(self.request.user)
+            return self.request.user.get_followers_query()
         user = get_object_or_404(CustomUser, **self.kwargs)
-        return Follower.get_followers(user)
+        return user.get_followers_query()
 
 
 class FollowingView(ListView):
@@ -83,14 +98,34 @@ class FollowingView(ListView):
 
     def get_queryset(self):
         if self.request.user.username == self.kwargs.get("username"):
-            return Follower.get_following(self.request.user)
+            return self.request.user.get_following_query()
         user = get_object_or_404(CustomUser, **self.kwargs)
-        return Follower.get_following(user)
+        return user.get_following_query()
 
 
+class UsersView(ListView):
+    template_name = "users/users.html"
+
+    def get_queryset(self):
+        username = self.request.GET.get("username", "")
+        return CustomUser.get_popular(request.user.pk, username)
+
+
+def follow(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    return JsonResponse(request.user.follow(user))
+
+
+def follower(request, pk):
+    user = get_object_or_404(CustomUser, pk=pk)
+    request.user.followers.remove(user)
+    return HttpResponse(None)
+
+
+@csrf_exempt
 def validate_email(request):
     try:
-        email = request.GET.get("email", None)
+        email = request.POST.get("email", None)
         ValidateEmail(email)
     except ValidationError:
         return JsonResponse({"is_taken": True})
@@ -99,8 +134,9 @@ def validate_email(request):
         return JsonResponse(response)
 
 
+@csrf_exempt
 def validate_username(request):
-    username = request.GET.get("username", None)
+    username = request.POST.get("username", None)
     for i in string.punctuation + string.whitespace:
         if i in username:
             return JsonResponse({"is_taken": True})
@@ -110,9 +146,10 @@ def validate_username(request):
     return JsonResponse(response)
 
 
+@csrf_exempt
 def validate_password(request):
     try:
-        password = request.GET.get("password1", None)
+        password = request.POST.get("password", None)
         ValidatePassword(password)
         return JsonResponse({"valid": True})
     except (ValidationError, TypeError):

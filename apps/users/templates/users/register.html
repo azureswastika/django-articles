@@ -1,98 +1,24 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
-  Регистрация
+    Регистрация
 {% endblock title %}
 
 
 {% block content %}
-    <div class="row">
-        <div class="col-8 col-md-6 login-form">
-            <form method="post" id="form">
+<div class="row">
+    <div class="col-8 col-md-6 login-form">
+        <form method="post" id="form">
             <h3 class="text-center mb-4">Регистрация</h3>
-                {% csrf_token %}
-                {{ form.as_p }}
-                <a href="{% url 'users:login' %}">Войти</a>
-                <button type="submit" class="btn btn-primary" id="submit" disabled>Зарегистрироваться</button>
-            </form>
-        </div>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <a href="{% url 'users:login' %}">Войти</a>
+            <button type="submit" class="btn btn-dark" id="submit" disabled>Зарегистрироваться</button>
+        </form>
     </div>
+</div>
 {% endblock content %}
 
 {% block javascript %}
-<script>
-    $(document).ready(function () {
-        function isValid() {
-            if ($("#id_email").val()) {
-                $.ajax({
-                    data: $("#id_email").serialize(),
-                    url: "{% url 'users:validate_email' %}",
-                    success: function (response) {
-                        if (response.is_taken == true) {
-                            $('#id_email').removeClass('is-valid').addClass('is-invalid');
-                        }
-                        else {
-                            $('#id_email').removeClass('is-invalid').addClass('is-valid');
-                        }
-                    },
-                });
-            }
-            if ($("#id_username").val()) {
-                $.ajax({
-                    data: $("#id_username").serialize(),
-                    url: "{% url 'users:validate_username' %}",
-                    success: function (response) {
-                        if (response.is_taken == true) {
-                            $('#id_username').removeClass('is-valid').addClass('is-invalid');
-                        }
-                        else {
-                            $('#id_username').removeClass('is-invalid').addClass('is-valid');
-                        }
-                    }
-                });
-            }
-            if ($("#id_password1").val()) {
-                $.ajax({
-                    data: $("#id_password1").serialize(),
-                    url: "{% url 'users:validate_password' %}",
-                    success: function (response) {
-                        if (response.valid == true) {
-                            $('#id_password1').removeClass('is-invalid').addClass('is-valid');
-                        }
-                        else {
-                            $('#id_password1').removeClass('is-valid').addClass('is-invalid');
-                        }
-                    }
-                });
-            }
-            if ($("#id_password1").val()) {
-                if ($('#id_password1').val() == $('#id_password2').val()) {
-                    $('#id_password2').removeClass('is-invalid').addClass('is-valid');
-                }
-                else {
-                    $('#id_password2').removeClass('is-valid').addClass('is-invalid');
-                }
-            }
-            isEmpty()
-        }
-        function isEmpty() {
-            if ($('#id_email').val() && $('#id_username').val() && $('#id_password1').val() && $('#id_password1').val() == $('#id_password2').val()) {
-                $("button[type='submit']").prop('disabled', false);
-            } else {
-                $("button[type='submit']").prop('disabled', true);
-            }
-        }
-        $('#id_email').keyup(function () {
-            isValid()
-        });
-        $('#id_username').keyup(function () {
-            isValid()
-        });
-        $('#id_password1').keyup(function () {
-            isValid()
-        });
-        $('#id_password2').keyup(function () {
-            isValid()
-        });
-    })
-</script>
+<script src="{% static 'js/register.js' %}"></script>
 {% endblock javascript %}

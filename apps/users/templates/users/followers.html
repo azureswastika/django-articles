@@ -2,7 +2,7 @@
 {% load customtags %}
 
 {% block title %}
-    Подписчики {{ request.resolver_match.kwargs.username }} | Django Articles
+    Подписчики {{ request.resolver_match.kwargs.username }}
 {% endblock title %}
 
 {% block header %}
@@ -12,10 +12,26 @@
 {% block content %}
     {% for object in object_list %}
         <div class="user-list">
-            <a href="{{ object.user.get_url }}">
-                <img src="{{ object.user.image|user_img }}" />
+            <a href="{{ object.get_url }}">
+                <img src="{{ object.image|user_img }}" />
             </a>
-            <a href="{{ object.user.get_url }}">@{{ object.user }}</a>
+            <div class="row">
+                <div class="col-10"><a href="{{ object.get_url }}" class="username">@{{ object }}</a></div>
+                {% if request.user.username == request.resolver_match.kwargs.username %}
+                    <div class="col-2"><a href="#" class="btn-dark" user="{{ object.pk }}">Отписать</a></div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).on('click', '.btn-dark', function (e) {
+        e.preventDefault()
+        const id = $(this).attr('user')
+        axios.get(`/follower/${id}/`).then(function (response) {})
+        $(this).parent().parent().parent().remove();
+    })
+</script>
+{% endblock javascript %}

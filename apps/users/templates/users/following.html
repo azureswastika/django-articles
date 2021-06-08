@@ -2,16 +2,32 @@
 {% load customtags %}
 
 {% block title %}
-    Подписки {{ request.resolver_match.kwargs.username }} | Django Articles
+    Подписки {{ request.resolver_match.kwargs.username }}
 {% endblock title %}
 
 {% block content %}
     {% for object in object_list %}
         <div class="user-list">
-            <a href="{{ object.following.get_url }}">
-                <img src="{{ object.following.image|user_img }}" />
+            <a href="{{ object.get_url }}">
+                <img src="{{ object.image|user_img }}" />
             </a>
-            <a href="{{ object.following.get_url }}">@{{ object.following }}</a>
+            <div class="row">
+                <div class="col-10"><a href="{{ object.get_url }}" class="username">@{{ object }}</a></div>
+                {% if request.user.username == request.resolver_match.kwargs.username %}
+                    <div class="col-2"><a href="#" class="btn-dark" user="{{ object.pk }}">Отписаться</a></div>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).on('click', '.btn-dark', function (e) {
+        e.preventDefault()
+        const id = $(this).attr('user')
+        axios.get(`/follow/${id}/`).then(function (response) {})
+        $(this).parent().parent().parent().remove();
+    })
+</script>
+{% endblock javascript %}

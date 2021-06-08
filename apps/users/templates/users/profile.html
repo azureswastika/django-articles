@@ -7,7 +7,7 @@
 {% load customtags %}
 
 {% block title %}
-	{{ object }} | Django articles
+	{{ object }}
 {% endblock title %}
 
 {% block content %}
@@ -18,17 +18,28 @@
 			<img src="{{ object.image|user_img }}" />
 			<a href="{{ object.get_url }}" class="profile-stats">@{{ object }}</a>
 			<ul class="profile-stats">
-				<li><a href="{{ object.get_followers_url }}">{{ object.followers }} followers</a></li>
-				<li><a href="{{ object.get_following_url }}">{{ object.following }} following</a></li>
-				<li>{{ object.posts }} posts</li>
+				<li><a href="{{ object.get_followers_url }}"><span id="followers">{{ object.followers.count }}</span> followers</a></li>
+				<li><a href="{{ object.get_following_url }}"><span id="following">{{ object.following.count }}</span> following</a></li>
+				<li><span>{{ object.get_posts_count }}</span> posts</li>
 			</ul>
+			{% if object.pk != request.user.pk %}
+				{% if object|is_follower:request.user %}
+					<a href="#" class="btn-dark" id="follow" user="{{ object.pk }}">Отписаться</a>
+				{% else %}
+					<a href="#" class="btn-dark" id="follow" user="{{ object.pk }}">Подписаться</a>
+				{% endif %}
+			{% else %}
+				<a href="{% url 'users:profile_update' %}" class="btn-dark">Изменить профиль</a>
+			{% endif %}
 		</div>
-		<div class="profile-data">
+		<div class="profile-data pt-4 pb-4">
 			{% if request.user == object %}
             <form method="post" id="post_create" class="mb-4">
 				{% csrf_token %}
-				{{ form.as_p }}
-                <button type="submit" class="btn btn-dark">Написать</button>
+				<div class="input-group mb-3">
+					<textarea name="text" cols="40" rows="10" class="form-control" required="" id="id_text"></textarea>
+					<button type="submit" class="btn btn-secondary">Написать</button>
+				</div>
             </form>
 			{% endif %}
 			{% include "articles/includes/post.html" %}
@@ -36,3 +47,23 @@
 	</div>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/like.js' %}"></script>
+<script>
+	{% if request.user.is_authenticated %}
+		$('#follow').click(function () {
+			const id = '{{ object.pk }}'
+			axios.get(`/follow/${id}/`).then(function (response) {
+				$('#followers').text(response.data.count)
+				$('#follow').text(response.data.message);
+			})
+		})
+	{% else %}
+		$('#follow').click(function () {
+			window.location = '/login/?next=' + window.location.pathname
+		})
+	{% endif %}
+	
+</script>
+{% endblock javascript %}

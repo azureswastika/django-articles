@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = environ.get("SECRET_KEY")
+SECRET_KEY = environ.get("SECRET_KEY", "secret-value")
 
 DEBUG = True
 
@@ -86,3 +86,5 @@ MEDIA_ROOT = BASE_DIR.joinpath(MEDIA_URL)
 
 LOGIN_URL = "users:login"
 AUTH_USER_MODEL = "users.CustomUser"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
