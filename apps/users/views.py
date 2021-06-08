@@ -6,7 +6,6 @@ from django.contrib.auth.password_validation import (
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
-from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
@@ -108,7 +107,7 @@ class UsersView(ListView):
 
     def get_queryset(self):
         username = self.request.GET.get("username", "")
-        return CustomUser.get_popular(request.user.pk, username)
+        return CustomUser.get_popular(self.request.user.pk, username)
 
 
 def follow(request, pk):

@@ -28,6 +28,12 @@ class RecommendationsView(RedirectNotAuthUser, ListView):
         return self.request.user.get_recommendations()
 
 
+def delete_post(request, post):
+    post = get_object_or_404(Post, pk=post)
+    post.delete()
+    return JsonResponse({"deleted": True})
+
+
 def like_post(request, post):
     post = get_object_or_404(Post, pk=post)
     return JsonResponse(post.like(request.user))

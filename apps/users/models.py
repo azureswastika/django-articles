@@ -64,10 +64,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         posts = []
         for like in liked:
             for user in like.likes.all().exclude(pk=self.pk)[:5]:
-                for post in self.Post.objects.filter(likes=user).exclude(
-                    likes__pk=self.pk
-                )[: randint(2, 6)]:
-                    posts.append(post)
+                for post in self.Post.objects.filter(
+                    likes=user, is_active=True
+                ).exclude(likes__pk=self.pk)[: randint(2, 6)]:
+                    if post not in posts:
+                        posts.append(post)
         shuffle(posts)
         return posts
 

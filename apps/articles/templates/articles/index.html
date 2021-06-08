@@ -6,5 +6,18 @@
 {% endblock title %}
 
 {% block content %}
-
+<div class="col-8 col-md-6 login-form">
+    <h3 class="text-center mb-4">Django Articles</h3>
+    <p class="text-center">Это небольшой проект написанный на фреймворке Django.</p>
+    {% if not request.user.is_authenticated %}
+        <div class="row text-center">
+            <div class="col">
+                <a href="{% url 'users:login' %}" class="btn btn-dark">Войти</a>
+            </div>
+            <div class="col">
+                <a href="{% url 'users:register' %}" class="btn btn-dark">Зарегистрироваться</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock content %}
