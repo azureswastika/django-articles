@@ -10,12 +10,12 @@
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous" />
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   {% block css %}{% endblock css %}
-  <title>{% block title %}Django Articles{% endblock title %}</title>
+  <title>{% block title %}Django Articles{% endblock title %} | Django Articles</title>
 </head>
 
 <body>
   {% block header %}{% include 'includes/header.html' %}{% endblock header %}
-  <div class="container">
+  <div class="container pb-4 mb-4">
     {% block content %}{% endblock content %}
   </div>
   {% block footer %}{% endblock footer %}

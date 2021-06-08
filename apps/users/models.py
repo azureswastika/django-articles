@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import BooleanField, CharField, EmailField, ImageField
+from random import randint, shuffle
 from django.db.models.fields import DateTimeField
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.signals import m2m_changed
@@ -53,22 +54,46 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.following.all()
 
     def get_posts(self):
-        return (
-            apps.get_app_config("articles")
-            .get_model("Post")
-            .objects.filter(user=self, is_active=True)
-        )
+        return self.Post.objects.filter(user=self, is_active=True)
+
+    def get_feed(self):
+        return self.Post.objects.filter(user__in=self.following.all(), is_active=True)
+
+    def get_recommendations(self):
+        liked = self.Post.objects.filter(likes=self)[: randint(2, 6)]
+        posts = []
+        for like in liked:
+            for user in like.likes.all().exclude(pk=self.pk)[:5]:
+                for post in self.Post.objects.filter(likes=user).exclude(
+                    likes__pk=self.pk
+                )[: randint(2, 6)]:
+                    posts.append(post)
+        shuffle(posts)
+        return posts
 
     def get_posts_count(self):
-        return (
-            apps.get_app_config("articles")
-            .get_model("Post")
-            .objects.filter(user=self, is_active=True)
-            .count()
-        )
+        return self.Post.objects.filter(user=self, is_active=True).count()
+
+    def follow(self, user) -> dict:
+        if user.is_follower(self):
+            user.followers.remove(self)
+            return {"message": "Подписаться", "count": user.followers.count()}
+        user.followers.add(self)
+        return {"message": "Отписаться", "count": user.followers.count()}
 
     def is_follower(self, user):
         return self.followers.filter(pk=user.pk).exists()
+
+    @staticmethod
+    def get_popular(pk: int, username: str):
+        return sorted(
+            CustomUser.objects.filter(username__icontains=username).exclude(pk=pk),
+            key=lambda user: -user.followers.count(),
+        )
+
+    @property
+    def Post(self):
+        return apps.get_app_config("articles").get_model("Post")
 
     def get_url(self):
         return f"/user/{self.username}/"

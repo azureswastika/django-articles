@@ -10,21 +10,25 @@ class UserCreationForm(auth.UserCreationForm):
         fields = "__all__"
 
 
-class UserChangeForm(auth.UserChangeForm):
-    class Meta:
-        model = CustomUser
-        fields = "__all__"
-
-
 class FormModel(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs["class"] = "form-control"
+            self.fields[field].widget.attrs["class"] = "form-control custom-form"
             if field == "email":
                 self.fields[field].required = True
             if field == "password1" or field == "password2":
                 self.fields[field].help_text = None
+
+
+class UserChangeForm(FormModel):
+    class Meta:
+        model = CustomUser
+        fields = (
+            "username",
+            "email",
+            "image"
+            )
 
 
 class LoginForm(auth.AuthenticationForm, FormModel):

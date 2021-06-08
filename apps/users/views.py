@@ -6,13 +6,14 @@ from django.contrib.auth.password_validation import (
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email as ValidateEmail
+from django.http import request
 from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls.base import reverse, reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from apps.articles.forms import PostCreate
@@ -20,7 +21,7 @@ from apps.articles.models import Post
 from apps.users.mixins import RedirectAuthUser
 from apps.users.models import CustomUser
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, UserChangeForm
 
 
 class LoginView(RedirectAuthUser, LoginView):
@@ -70,6 +71,18 @@ class ProfileView(DetailView, FormView):
         )
 
 
+class ProfileUpdateView(UpdateView):
+    model = CustomUser
+    form_class = UserChangeForm
+    template_name = "users/profile_update.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self) -> str:
+        return reverse("users:profile", args=[self.request.user.username])
+
+
 class FollowersView(ListView):
     template_name = "users/followers.html"
 
@@ -95,26 +108,12 @@ class UsersView(ListView):
 
     def get_queryset(self):
         username = self.request.GET.get("username", "")
-        print(username)
-        return sorted(
-            CustomUser.objects.filter(username__icontains=username).exclude(
-                pk=self.request.user.pk
-            ),
-            key=lambda user: -user.followers.count(),
-        )
+        return CustomUser.get_popular(request.user.pk, username)
 
 
 def follow(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
-    if user.is_follower(request.user):
-        user.followers.remove(request.user)
-        return JsonResponse(
-            {"message": "Подписаться", "count": f"{user.followers.count()} followers"}
-        )
-    user.followers.add(request.user)
-    return JsonResponse(
-        {"message": "Отписаться", "count": f"{user.followers.count()} followers"}
-    )
+    return JsonResponse(request.user.follow(user))
 
 
 def follower(request, pk):

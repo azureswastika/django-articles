@@ -30,13 +30,16 @@ class Post(models.Model):
         self.save()
         return
 
+    def like(self, user) -> dict:
+        if self.user_liked(user):
+            self.likes.remove(user)
+            return {"liked": False, "count": self.likes.count()}
+        self.likes.add(user)
+        return {"liked": True, "count": self.likes.count()}
+
     def user_liked(self, user):
         return self.likes.filter(pk=user.pk).exists()
 
     @staticmethod
     def get_user_posts(user):
         return Post.objects.filter(user=user, is_active=True)
-
-    @staticmethod
-    def get_feed(user):
-        return Post.objects.filter(user__in=user.following.all(), is_active=True)

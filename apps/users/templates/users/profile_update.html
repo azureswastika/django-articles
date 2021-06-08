@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+    Редактировать профиль
+{% endblock title %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-8 col-md-6 login-form">
+            <form method="post" enctype="multipart/form-data">
+            <h3 class="text-center mb-4">Редактировать профиль</h3>
+                {% csrf_token %}
+                <p><label for="id_username">Имя пользователя:</label> <input type="text" name="username" value="admin" maxlength="55" class="form-control custom-form" required="" id="id_username"></p>
+                <p><label for="id_email">Электронный адрес:</label> <input type="email" name="email" value="admin@mail.com" maxlength="254" class="form-control custom-form" required="" id="id_email"></p>
+                <div class="input-group">
+                    <input type="file" name="image" accept="image/*" id="id_image" class="form-control">
+                    <div class="input-group-text">
+                        <input class="form-check-input mt-0" type="checkbox" name="image-clear" id="image-clear_id">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-dark">Сохранить</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}
