@@ -9,5 +9,5 @@ urlpatterns = [
     path("feed/", FeedView.as_view(), name="feed"),
     path("recommendations/", RecommendationsView.as_view(), name="recommendations"),
     path("post/<int:post>/like/", like_post, name="like_post"),
-    path("post/<int:post>/delete/", delete_post, name="delete_post")
+    path("post/<int:post>/delete/", delete_post, name="delete_post"),
 ]

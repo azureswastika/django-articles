@@ -57,7 +57,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.Post.objects.filter(user=self, is_active=True)
 
     def get_feed(self):
-        return self.Post.objects.filter(user__in=self.following.all(), is_active=True)
+        return self.Post.objects.filter(
+            user__in=list(self.following.all()) + [self], is_active=True
+        )
 
     def get_recommendations(self):
         liked = self.Post.objects.filter(likes=self)[: randint(2, 6)]
