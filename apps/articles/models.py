@@ -26,7 +26,7 @@ class Post(models.Model):
         return f"{self.text[:30]} ({self.user})"
 
     def delete(self, *args, **kwargs):
-        self.is_active = False
+        self.is_active = not self.is_active
         self.save()
         return
 
@@ -39,6 +39,12 @@ class Post(models.Model):
 
     def user_liked(self, user):
         return self.likes.filter(pk=user.pk).exists()
+
+    def archivate(self, user) -> dict:
+        if self.user != user:
+            return None
+        self.delete()
+        return False if self.is_active else True
 
     @staticmethod
     def get_user_posts(user):

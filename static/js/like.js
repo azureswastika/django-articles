@@ -7,14 +7,28 @@ $('.like').click(function () {
         } else {
             $('#likebtn' + post).attr('src', '/static/svg/like.svg')
         }
+        anime({
+            targets: '#likebtn' + post,
+            translateY: -10,
+            direction: 'alternate',
+            duration: 100,
+            easing: 'easeInOutSine'
+          });
     })
 })
 
 $('.delete-post').click(function () {
     const post = $(this).attr('post')
     axios.get(`/post/${post}/delete/`).then(function (response) {
-        if (response.data.deleted == true) {
-            $('#post' + post).remove()
+        if (response.data.deleted == true || response.data.deleted == false) {
+            const animation = anime({
+                targets: '#post' + post,
+                opacity: 0,
+                endDelay: 50,
+              })
+              animation.finished.then(function () {
+                $('#post' + post).remove();
+              });
         }
     })
 })

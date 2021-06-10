@@ -29,7 +29,8 @@
 					<a href="#" class="btn-dark" id="follow" user="{{ object.pk }}">Подписаться</a>
 				{% endif %}
 			{% else %}
-				<a href="{% url 'users:profile_update' %}" class="btn-dark">Изменить профиль</a>
+				<a href="{% url 'users:profile_update' %}" class="btn-dark ml-4">Изменить профиль</a><br/>
+				<a href="{% url 'articles:archive' %}" class="btn-dark ml-4">Архив</a>
 			{% endif %}
 		</div>
 		<div class="profile-data pt-4 pb-4">

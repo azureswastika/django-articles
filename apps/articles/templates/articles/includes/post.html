@@ -10,7 +10,8 @@
         <small class="text-muted">{{ post.created_at|date:"d.m.Y, H:m:s" }}</small>
         {% if post.user == request.user %}
             <div class="float-end">
-                <button type="button" class="btn-close btn-close-white delete-post" post="{{ post.pk }}"></button>
+                <button type="button" class="btn-close btn-close-white delete-post" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Архивировать" post="{{ post.pk }}"></button>
             </div>
         {% endif %}
         <div class="data">

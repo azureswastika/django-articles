@@ -28,12 +28,17 @@ class RecommendationsView(RedirectNotAuthUser, ListView):
         return self.request.user.get_recommendations()
 
 
+class ArchiveView(RedirectNotAuthUser, ListView):
+    template_name = "articles/recommendations.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        return self.request.user.get_archive()
+
+
 def delete_post(request, post):
     post = get_object_or_404(Post, pk=post)
-    if post.user == request.user:
-        post.delete()
-        return JsonResponse({"deleted": True})
-    return JsonResponse({"deleted": False})
+    return JsonResponse({"deleted": post.archivate(request.user)})
 
 
 def like_post(request, post):
