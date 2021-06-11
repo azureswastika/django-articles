@@ -47,13 +47,13 @@ class PostDetailView(DetailView):
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        Comment.objects.create(post=post, user=request.user, text=request.POST.get("text"))
+        Comment.objects.create(
+            post=post, user=request.user, text=request.POST.get("text")
+        )
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self) -> str:
-        return reverse(
-            "articles:post", kwargs={"pk": self.kwargs.get("pk")}
-        )
+        return reverse("articles:post", kwargs={"pk": self.kwargs.get("pk")})
 
 
 def delete_post(request, post):
