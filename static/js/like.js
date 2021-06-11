@@ -17,6 +17,11 @@ $('.like').click(function () {
     })
 })
 
+$('.comment').click(function () {
+    const post = $(this).attr('post')
+    window.location = `/post/${post}/`
+})
+
 $('.delete-post').click(function () {
     const post = $(this).attr('post')
     axios.get(`/post/${post}/delete/`).then(function (response) {

@@ -40,6 +40,12 @@ class Post(models.Model):
     def user_liked(self, user):
         return self.likes.filter(pk=user.pk).exists()
 
+    def get_comments(self):
+        return Comment.objects.filter(post=self)
+
+    def get_comments_count(self):
+        return Comment.objects.filter(post=self).count()
+
     def archivate(self, user) -> dict:
         if self.user != user:
             return None
@@ -49,3 +55,12 @@ class Post(models.Model):
     @staticmethod
     def get_user_posts(user):
         return Post.objects.filter(user=user, is_active=True)
+
+
+class Comment(models.Model):
+    user = ForeignKey(CustomUser, CASCADE)
+    post = ForeignKey(Post, CASCADE)
+    parent = ForeignKey("Comment", CASCADE, null=True, blank=True)
+    text = TextField(_("Текст"))
+    likes = ManyToManyField(CustomUser, "comment_likes", blank=True)
+    created_at = DateTimeField(_("Время публикации"), auto_now_add=True)

@@ -4,6 +4,7 @@ from .views import (
     ArchiveView,
     FeedView,
     IndexView,
+    PostDetailView,
     RecommendationsView,
     delete_post,
     like_post,
@@ -16,6 +17,7 @@ urlpatterns = [
     path("feed/", FeedView.as_view(), name="feed"),
     path("archive/", ArchiveView.as_view(), name="archive"),
     path("recommendations/", RecommendationsView.as_view(), name="recommendations"),
+    path("post/<int:pk>/", PostDetailView.as_view(), name="post"),
     path("post/<int:post>/like/", like_post, name="like_post"),
     path("post/<int:post>/delete/", delete_post, name="delete_post"),
 ]

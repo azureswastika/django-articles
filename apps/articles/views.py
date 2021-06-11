@@ -1,5 +1,5 @@
 from django.http.response import JsonResponse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic.list import ListView
 
 from apps.articles.mixins import RedirectNotAuthUser
@@ -34,6 +34,16 @@ class ArchiveView(RedirectNotAuthUser, ListView):
 
     def get_queryset(self):
         return self.request.user.get_archive()
+
+
+class PostDetailView(DetailView):
+    model = Post
+    context_object_name = "post"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comments"] = context["object"].get_comments()
+        return context
 
 
 def delete_post(request, post):
