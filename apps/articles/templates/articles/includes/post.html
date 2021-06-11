@@ -15,14 +15,14 @@
             </div>
         {% endif %}
         <div class="data">
-            <p>{{ post.text }}</p>
+            <p class="text-break">{{ post.text }}</p>
             {% if post|user_liked:request.user %}
                 <img src="{% static 'svg/liked.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
             {% else %}
                 <img src="{% static 'svg/like.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
             {% endif %}
             <span id="count{{ post.pk }}">{{ post.likes.count }}</span>
-            <img src="{% static 'svg/comment.svg' %}" alt="" srcset="" class="comment" post="{{ post.pk }}">
+            <img src="{% static 'svg/comment.svg' %}" alt="" srcset="" class="comment" post="{{ post.pk }}" id="comment{{ post.pk }}">
             <span id="count{{ post.pk }}">{{ post.get_comments_count }}</span>
         </div>
         {% if not forloop.last %}

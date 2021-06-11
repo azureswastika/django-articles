@@ -21,16 +21,27 @@
                 </div>
             {% endif %}
             <div class="data">
-                <p>{{ post.text }}</p>
+                <p class="text-break">{{ post.text }}</p>
                 {% if post|user_liked:request.user %}
                     <img src="{% static 'svg/liked.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
                 {% else %}
                     <img src="{% static 'svg/like.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
                 {% endif %}
                 <span id="count{{ post.pk }}">{{ post.likes.count }}</span>
+                <img src="{% static 'svg/comment.svg' %}" alt="" srcset="" class="comment" post="{{ post.pk }}" id="comment{{ post.pk }}">
+                <span id="count{{ post.pk }}">{{ post.get_comments_count }}</span>
             </div>
             <hr>
             <small class="text-muted">Комментарии</small>
+        </div>
+        <div class="col-10 login-form" style="margin-top: 0px;">
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+					<textarea name="text" cols="40" rows="10" class="form-control custom-form" required="" id="id_text" style="background-color: #2a3035; color: #fff;"></textarea>
+					<button type="submit" class="btn btn-secondary">Написать</button>
+				</div>
+            </form>
         </div>
         <div class="mt-4">
             {% include "articles/includes/comment.html" %}

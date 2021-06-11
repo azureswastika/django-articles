@@ -19,6 +19,13 @@ $('.like').click(function () {
 
 $('.comment').click(function () {
     const post = $(this).attr('post')
+    anime({
+        targets: '#comment' + post,
+        translateY: -10,
+        direction: 'alternate',
+        duration: 100,
+        easing: 'easeInOutSine'
+      });
     window.location = `/post/${post}/`
 })
 

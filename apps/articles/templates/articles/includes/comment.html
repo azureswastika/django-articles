@@ -9,7 +9,7 @@
         <a href="{{ comment.user.get_url }}">@{{ comment.user }} </a>
         <small class="text-muted">{{ comment.created_at|date:"H:m:s, d.m.Y" }}</small>
         <div class="data">
-            <p>{{ comment.text }}</p>
+            <p class="text-break">{{ comment.text }}</p>
         </div>
         {% if not forloop.last %}
             <hr>

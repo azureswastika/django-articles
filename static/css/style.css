@@ -142,7 +142,7 @@ a {
   color: white;
 }
 
-.custom-form input {
+.custom-form input, textarea {
   background: #2a3035;
   border-color: #2a3035;
   color: #fff;
