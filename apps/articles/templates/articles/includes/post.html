@@ -23,7 +23,7 @@
             {% endif %}
             <span id="count{{ post.pk }}">{{ post.likes.count }}</span>
             <img src="{% static 'svg/comment.svg' %}" alt="" srcset="" class="comment" post="{{ post.pk }}">
-            <span id="count{{ post.pk }}">{{ post.comments_count }}</span>
+            <span id="count{{ post.pk }}">{{ post.get_comments_count }}</span>
         </div>
         {% if not forloop.last %}
             <hr>
