@@ -37,6 +37,7 @@ $('.delete-post').click(function () {
                 targets: '#post' + post,
                 opacity: 0,
                 endDelay: 50,
+                easing: 'easeInOutSine'
               })
               animation.finished.then(function () {
                 $('#post' + post).remove();
