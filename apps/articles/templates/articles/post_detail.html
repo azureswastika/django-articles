@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customtags %}
+
+{% block title %}
+    Лента
+{% endblock title %}
+
+{% block content %}
+    <div class="feed pb-4 mb-4">
+        <div class="post" id="post{{ post.pk }}">
+            <a href="{{ post.user.get_url }}">
+                <img src="{{ post.user.image|user_img }}" class="avatar"/>
+            </a>
+            <a href="{{ post.user.get_url }}">@{{ post.user }} </a>
+            <small class="text-muted">{{ post.created_at|date:"H:m:s, d.m.Y" }}</small>
+            {% if post.user == request.user %}
+                <div class="float-end">
+                    <button type="button" class="btn-close btn-close-white delete-post" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="Архивировать" post="{{ post.pk }}"></button>
+                </div>
+            {% endif %}
+            <div class="data">
+                <p class="text-break">{{ post.text }}</p>
+                {% if post|user_liked:request.user %}
+                    <img src="{% static 'svg/liked.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
+                {% else %}
+                    <img src="{% static 'svg/like.svg' %}" alt="" srcset="" class="like" post="{{ post.pk }}" id="likebtn{{ post.pk }}">
+                {% endif %}
+                <span id="count{{ post.pk }}">{{ post.likes.count }}</span>
+                <img src="{% static 'svg/comment.svg' %}" alt="" srcset="" class="comment" post="{{ post.pk }}" id="comment{{ post.pk }}">
+                <span id="count{{ post.pk }}">{{ post.get_comments_count }}</span>
+            </div>
+            <hr>
+            <small class="text-muted">Комментарии</small>
+        </div>
+        <div class="col-10 login-form" style="margin-top: 0px;">
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+					<textarea name="text" cols="40" rows="10" class="form-control custom-form" required="" id="id_text" style="background-color: #2a3035; color: #fff;"></textarea>
+					<button type="submit" class="btn btn-secondary">Написать</button>
+				</div>
+            </form>
+        </div>
+        <div class="mt-4">
+            {% include "articles/includes/comment.html" %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/like.js' %}"></script>
+{% endblock javascript %}

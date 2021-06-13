@@ -1,0 +1,20 @@
+{% load static %}
+{% load customtags %}
+
+{% for comment in comments %}
+    <div class="post" id="post{{ post.pk }}">
+        <a href="{{ comment.user.get_url }}">
+            <img src="{{ comment.user.image|user_img }}" class="avatar"/>
+        </a>
+        <a href="{{ comment.user.get_url }}">@{{ comment.user }} </a>
+        <small class="text-muted">{{ comment.created_at|date:"H:m:s, d.m.Y" }}</small>
+        <div class="data">
+            <p class="text-break">{{ comment.text }}</p>
+        </div>
+        {% if not forloop.last %}
+            <hr>
+        {% endif %}
+    </div>
+{% empty %}
+    <h1 class="text-center pt-4 pb-4">Тут пока ничего нет :(</h1>
+{% endfor %}

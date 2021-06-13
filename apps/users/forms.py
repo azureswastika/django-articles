@@ -24,11 +24,7 @@ class FormModel(forms.ModelForm):
 class UserChangeForm(FormModel):
     class Meta:
         model = CustomUser
-        fields = (
-            "username",
-            "email",
-            "image"
-            )
+        fields = ("username", "email", "image")
 
 
 class LoginForm(auth.AuthenticationForm, FormModel):
