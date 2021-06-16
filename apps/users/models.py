@@ -57,10 +57,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.Post.objects.filter(user=self, is_active=True)
 
     def get_feed(self):
-        return self.Post.objects.filter(user__in=self.following.all(), is_active=True)
+        return self.Post.objects.filter(
+            user__in=list(self.following.all()) + [self], is_active=True
+        )
+
+    def get_liked_posts(self):
+        return self.Post.objects.filter(likes=self, is_active=True)
+
+    def get_archive(self):
+        return self.Post.objects.filter(user=self, is_active=False)
 
     def get_recommendations(self):
-        liked = self.Post.objects.filter(likes=self)[: randint(2, 6)]
+        liked = self.Post.objects.filter(likes=self, is_active=True)[: randint(2, 6)]
         posts = []
         for like in liked:
             for user in like.likes.all().exclude(pk=self.pk)[:5]:

@@ -69,7 +69,7 @@ a {
   margin: 0 1em 0 0;
 }
 
-.post .like {
+.post .like, .comment {
   width: 16px;
   height: 16px;
   margin-right: 0.5em;
@@ -142,7 +142,7 @@ a {
   color: white;
 }
 
-.custom-form input {
+.custom-form input, textarea {
   background: #2a3035;
   border-color: #2a3035;
   color: #fff;

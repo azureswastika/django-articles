@@ -7,7 +7,7 @@ SECRET_KEY = environ.get("SECRET_KEY", "secret-value")
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -88,3 +88,8 @@ LOGIN_URL = "users:login"
 AUTH_USER_MODEL = "users.CustomUser"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Debug tool
+
+# if DEBUG:
+#     INTERNAL_IPS = ["127.0.0.1"]
